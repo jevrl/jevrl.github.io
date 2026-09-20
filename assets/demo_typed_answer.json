@@ -1,0 +1,22 @@
+{
+  "state": {
+    "ticket": "API timeout",
+    "region": "us-east",
+    "candidates": [
+      "low",
+      "medium",
+      "high"
+    ]
+  },
+  "jevrl": {
+    "choice": "medium",
+    "choice_probs": {
+      "low": 0.08,
+      "medium": 0.7,
+      "high": 0.22
+    },
+    "score": 0.74,
+    "noul": 0.08
+  },
+  "note": "Static visualization of the pilot interface; run the code for model-backed inference."
+}

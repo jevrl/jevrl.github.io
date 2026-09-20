@@ -3,383 +3,212 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f2efe8">
-  <meta name="description" content="JevRL — probability-aware reinforcement learning for typed, calibrated decisions.">
-  <title>JevRL — Calibrated decisions for software</title>
+  <meta name="theme-color" content="#f7f8fc">
+  <meta name="description" content="JevRL: Calibrated Typed Decisions from Language Models via Reward Learning.">
+  <title>JevRL: Calibrated Typed Decisions</title>
   <style>
     :root {
-      --ink: #17211f;
-      --muted: #66716d;
-      --paper: #f2efe8;
-      --paper-deep: #e8e3d9;
-      --card: rgba(255,255,255,.68);
-      --line: rgba(23,33,31,.14);
-      --teal: #0b6f67;
-      --teal-dark: #084f4a;
-      --orange: #ef8b55;
-      --lavender: #dcd7ff;
-      --serif: Georgia, "Times New Roman", serif;
-      --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --ink:#1d2740; --ink-2:#31405e; --muted:#6f7890; --line:#e1e5ef;
+      --paper:#f7f8fc; --white:#fff; --purple:#6755e7; --purple-2:#9288ff;
+      --green:#1d9b73; --orange:#c66a2a; --navy:#17213b; --shadow:0 18px 55px rgba(42,52,91,.10);
+      --sans:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --serif:Georgia, "Times New Roman", serif;
     }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      color: var(--ink);
-      background: var(--paper);
-      font-family: var(--sans);
-      -webkit-font-smoothing: antialiased;
-    }
-    a { color: inherit; }
-    .sale {
-      min-height: 100svh;
-      display: grid;
-      place-items: center;
-      position: relative;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 20% 15%, rgba(239,139,85,.25), transparent 28rem),
-        radial-gradient(circle at 90% 85%, rgba(11,111,103,.18), transparent 30rem),
-        #fff;
-    }
-    .sale::before {
-      content: "";
-      position: absolute;
-      width: 42rem;
-      height: 42rem;
-      border: 1px solid rgba(23,33,31,.11);
-      border-radius: 50%;
-      transform: translate(17rem, -15rem);
-    }
-    .sale-inner {
-      position: relative;
-      z-index: 1;
-      width: min(86vw, 980px);
-      padding: 3rem 1.5rem;
-      text-align: center;
-    }
-    .sale-kicker {
-      margin: 0 0 1.8rem;
-      color: var(--teal);
-      font-size: .72rem;
-      font-weight: 800;
-      letter-spacing: .22em;
-      text-transform: uppercase;
-    }
-    .sale h1 {
-      margin: 0;
-      font-family: var(--serif);
-      font-size: clamp(3.6rem, 11vw, 9rem);
-      line-height: .92;
-      letter-spacing: -.07em;
-      font-weight: 700;
-    }
-    .sale-price {
-      margin: 1.3rem 0 .6rem;
-      font-family: var(--serif);
-      font-size: clamp(2rem, 5vw, 4.6rem);
-      letter-spacing: -.05em;
-    }
-    .sale-contact {
-      margin: 0;
-      color: #3e4a46;
-      font-size: clamp(1rem, 1.7vw, 1.25rem);
-    }
-    .sale-contact a { text-underline-offset: .2em; }
-    .scroll-cue {
-      position: absolute;
-      left: 50%;
-      bottom: 2rem;
-      transform: translateX(-50%);
-      display: inline-flex;
-      align-items: center;
-      gap: .65rem;
-      color: var(--muted);
-      font-size: .72rem;
-      font-weight: 800;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      text-decoration: none;
-    }
-    .scroll-cue::after {
-      content: "↓";
-      display: grid;
-      place-items: center;
-      width: 1.7rem;
-      height: 1.7rem;
-      border: 1px solid var(--line);
-      border-radius: 50%;
-      font-size: 1rem;
-    }
-    .project {
-      position: relative;
-      overflow: hidden;
-      padding: 7.5rem max(1.25rem, calc((100vw - 1180px) / 2)) 4rem;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.45), transparent 45%),
-        var(--paper);
-    }
-    .project::after {
-      content: "JEVRL";
-      position: absolute;
-      top: 5rem;
-      right: -2rem;
-      color: rgba(11,111,103,.07);
-      font-size: clamp(7rem, 22vw, 19rem);
-      font-weight: 900;
-      letter-spacing: -.1em;
-      line-height: .8;
-      pointer-events: none;
-    }
-    .project > * { position: relative; z-index: 1; }
-    .container { width: min(100%, 1180px); margin: 0 auto; }
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: .55rem;
-      color: var(--teal);
-      font-size: .73rem;
-      font-weight: 800;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-    }
-    .eyebrow::before { content: ""; width: 2.4rem; height: 1px; background: var(--teal); }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr);
-      gap: 4rem;
-      align-items: end;
-      padding-bottom: 7rem;
-    }
-    .hero-title {
-      max-width: 780px;
-      margin: 1.5rem 0 1.5rem;
-      font-family: var(--serif);
-      font-size: clamp(3.4rem, 8vw, 7.7rem);
-      line-height: .92;
-      letter-spacing: -.075em;
-      font-weight: 700;
-    }
-    .hero-title em { color: var(--teal); font-style: normal; }
-    .hero-copy {
-      max-width: 620px;
-      margin: 0;
-      color: #53615c;
-      font-size: clamp(1.05rem, 1.7vw, 1.3rem);
-      line-height: 1.65;
-    }
-    .author-card {
-      border-top: 1px solid var(--line);
-      padding-top: 1.2rem;
-      color: var(--muted);
-      font-size: .92rem;
-      line-height: 1.6;
-    }
-    .author-card strong { display: block; color: var(--ink); font-size: 1.25rem; font-weight: 700; }
-    .author-card span { display: block; margin-top: .25rem; }
-    .pill-row { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1.6rem; }
-    .pill {
-      padding: .48rem .75rem;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: #40504a;
-      background: rgba(255,255,255,.35);
-      font-size: .78rem;
-      font-weight: 700;
-    }
-    .section-block { padding: 5.5rem 0; border-top: 1px solid var(--line); }
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 2rem;
-      align-items: end;
-      margin-bottom: 2.2rem;
-    }
-    .section-head h2 {
-      max-width: 640px;
-      margin: .8rem 0 0;
-      font-family: var(--serif);
-      font-size: clamp(2.5rem, 5vw, 5rem);
-      line-height: .98;
-      letter-spacing: -.065em;
-    }
-    .section-head p { max-width: 350px; margin: 0; color: var(--muted); line-height: 1.6; }
-    .method {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1px;
-      border: 1px solid var(--line);
-      background: var(--line);
-    }
-    .method-step { min-height: 190px; padding: 1.5rem; background: rgba(255,255,255,.42); }
-    .method-step:nth-child(2) { background: #e4efeb; }
-    .method-step:nth-child(3) { background: #f9e5d9; }
-    .method-step:nth-child(4) { background: var(--lavender); }
-    .step-num { color: var(--muted); font-size: .75rem; font-weight: 800; letter-spacing: .12em; }
-    .method-step h3 { margin: 3.6rem 0 .55rem; font-family: var(--serif); font-size: 1.65rem; letter-spacing: -.04em; }
-    .method-step p { margin: 0; color: #53615c; font-size: .9rem; line-height: 1.5; }
-    .primitives { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    .primitive {
-      min-height: 245px;
-      padding: 1.5rem;
-      border: 1px solid var(--line);
-      background: var(--card);
-      box-shadow: 0 1.5rem 4rem rgba(24,37,33,.05);
-    }
-    .primitive-tag { color: var(--teal); font-size: .72rem; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
-    .primitive h3 { margin: 2.6rem 0 .6rem; font-family: var(--serif); font-size: 2.15rem; letter-spacing: -.05em; }
-    .primitive p { margin: 0; color: var(--muted); line-height: 1.55; }
-    .primitive code { display: inline-block; margin-top: 1.2rem; color: var(--teal-dark); font-size: .82rem; }
-    .results-wrap { overflow-x: auto; border: 1px solid var(--line); background: rgba(255,255,255,.45); }
-    table { width: 100%; border-collapse: collapse; min-width: 680px; }
-    th, td { padding: 1rem 1.2rem; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
-    th { color: var(--muted); font-size: .7rem; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
-    td { font-size: .92rem; }
-    tbody tr:last-child td { border-bottom: 0; }
-    tbody tr.highlight { background: rgba(11,111,103,.09); }
-    tbody tr.highlight td:first-child { color: var(--teal-dark); font-weight: 800; }
-    .results-note { margin: 1rem 0 0; color: var(--muted); font-size: .85rem; line-height: 1.55; }
-    .split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-    .info-card { padding: 2rem; border: 1px solid var(--line); background: rgba(255,255,255,.42); }
-    .info-card.accent { background: var(--teal); color: #f1f5f0; }
-    .info-card h3 { margin: 0 0 .8rem; font-family: var(--serif); font-size: 2.2rem; letter-spacing: -.05em; }
-    .info-card p { margin: 0; color: var(--muted); line-height: 1.65; }
-    .info-card.accent p { color: rgba(241,245,240,.74); }
-    .coming { display: inline-flex; margin-top: 1.7rem; padding: .65rem .9rem; border: 1px solid currentColor; border-radius: 999px; font-size: .75rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
-    footer { display: flex; justify-content: space-between; gap: 1rem; padding: 2rem 0 .5rem; color: var(--muted); font-size: .78rem; }
-    footer a { text-underline-offset: .2em; }
-    @media (max-width: 800px) {
-      .hero-grid, .split { grid-template-columns: 1fr; gap: 2.5rem; }
-      .hero-grid { padding-bottom: 5rem; }
-      .method { grid-template-columns: repeat(2, 1fr); }
-      .primitives { grid-template-columns: 1fr; }
-      .section-block { padding: 4.5rem 0; }
-      .section-head { display: block; }
-      .section-head p { margin-top: 1.2rem; }
-      footer { display: block; }
-      footer span { display: block; margin-top: .5rem; }
-    }
-    @media (max-width: 480px) {
-      .method { grid-template-columns: 1fr; }
-      .method-step { min-height: 150px; }
-      .method-step h3 { margin-top: 2rem; }
-      .sale-inner { padding-inline: 1rem; }
-    }
-    @media (prefers-reduced-motion: no-preference) {
-      .scroll-cue::after { animation: bob 1.8s ease-in-out infinite; }
-      @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
-    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:var(--paper); font-family:var(--sans); line-height:1.6; }
+    a { color:inherit; }
+    img { max-width:100%; display:block; }
+    .sale { min-height:100svh; display:grid; place-items:center; position:relative; overflow:hidden; background:#fff; }
+    .sale:before { content:""; position:absolute; width:52vw; aspect-ratio:1; right:-15vw; top:-30vw; border:1px solid #dfe3ec; border-radius:50%; box-shadow:0 0 0 70px rgba(103,85,231,.025),0 0 0 140px rgba(103,85,231,.018); }
+    .sale-inner { position:relative; z-index:1; width:min(900px,90vw); text-align:center; padding:3rem 0; }
+    .sale-kicker { margin:0 0 1.5rem; color:var(--purple); font-size:.74rem; font-weight:800; letter-spacing:.22em; text-transform:uppercase; }
+    .sale h1 { margin:0; color:#17213b; font-family:var(--serif); font-size:clamp(4rem,12vw,9.3rem); line-height:.9; letter-spacing:-.07em; }
+    .sale-price { margin:1.3rem 0 .6rem; font-family:var(--serif); font-size:clamp(2rem,5vw,4rem); color:#313d5d; }
+    .sale-contact { margin:0; color:var(--muted); font-size:1rem; }
+    .sale-contact a { text-decoration:underline; text-underline-offset:4px; }
+    .scroll-cue { position:absolute; bottom:2rem; left:50%; transform:translateX(-50%); color:#9aa2b4; font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; }
+    .scroll-cue:after { content:"↓"; display:block; margin-top:.3rem; text-align:center; font-size:1.2rem; }
+    .project { background:var(--paper); border-top:1px solid var(--line); }
+    .nav { position:sticky; top:0; z-index:20; background:rgba(247,248,252,.9); backdrop-filter:blur(16px); border-bottom:1px solid rgba(225,229,239,.9); }
+    .nav-inner { width:min(1160px,92vw); margin:auto; min-height:62px; display:flex; align-items:center; justify-content:space-between; gap:2rem; }
+    .brand { color:var(--navy); font-weight:850; letter-spacing:-.04em; font-size:1.25rem; text-decoration:none; }
+    .brand span { color:var(--purple); }
+    .nav-links { display:flex; align-items:center; gap:1.25rem; color:var(--muted); font-size:.8rem; font-weight:700; }
+    .nav-links a { text-decoration:none; }
+    .nav-links a:hover { color:var(--purple); }
+    .hero { width:min(1160px,92vw); margin:auto; padding:7rem 0 4.5rem; text-align:center; }
+    .eyebrow { color:var(--purple); font-size:.75rem; font-weight:850; letter-spacing:.18em; text-transform:uppercase; }
+    .hero h2 { max-width:1000px; margin:1rem auto 1.25rem; color:var(--navy); font-size:clamp(2.7rem,6.5vw,5.9rem); line-height:.99; letter-spacing:-.065em; }
+    .hero-sub { max-width:740px; margin:0 auto; color:var(--muted); font-size:clamp(1.04rem,1.8vw,1.32rem); }
+    .authors { margin:1.8rem 0 .2rem; font-size:1.05rem; font-weight:750; color:var(--ink-2); }
+    .affiliation { color:var(--muted); font-size:.92rem; }
+    .resource-row { margin:2.1rem auto 0; display:flex; flex-wrap:wrap; justify-content:center; gap:.7rem; }
+    .button { display:inline-flex; align-items:center; justify-content:center; min-height:42px; padding:0 1.05rem; border:1px solid #d8ddea; border-radius:999px; color:var(--ink-2); background:#fff; text-decoration:none; font-size:.84rem; font-weight:800; box-shadow:0 6px 18px rgba(42,52,91,.05); }
+    .button:hover { border-color:var(--purple); color:var(--purple); transform:translateY(-1px); }
+    .button.primary { color:#fff; border-color:var(--purple); background:var(--purple); }
+    .button.primary:hover { color:#fff; background:#5848d4; }
+    .hero-teaser { margin:4rem auto 0; border:1px solid #dfe3ed; border-radius:24px; overflow:hidden; background:#fff; box-shadow:var(--shadow); }
+    .hero-teaser img { width:100%; }
+    .teaser-caption { display:flex; justify-content:space-between; gap:1rem; padding:1rem 1.25rem; color:var(--muted); font-size:.78rem; text-align:left; }
+    .teaser-caption strong { color:var(--ink-2); }
+    .section { width:min(1000px,90vw); margin:auto; padding:5.2rem 0; }
+    .section.wide { width:min(1160px,92vw); }
+    .section + .section { border-top:1px solid var(--line); }
+    .section-head { display:flex; align-items:end; justify-content:space-between; gap:2rem; margin-bottom:2.2rem; }
+    .section-kicker { color:var(--purple); font-size:.7rem; font-weight:850; letter-spacing:.18em; text-transform:uppercase; }
+    h3 { margin:.35rem 0 0; color:var(--navy); font-size:clamp(1.8rem,3.5vw,2.8rem); line-height:1.05; letter-spacing:-.05em; }
+    .lede { max-width:680px; color:var(--muted); font-size:1.02rem; }
+    .abstract { padding:2rem 2.2rem; border:1px solid var(--line); border-radius:20px; background:#fff; box-shadow:0 10px 30px rgba(42,52,91,.05); color:var(--ink-2); font-size:1.08rem; line-height:1.75; }
+    .abstract b { color:var(--navy); }
+    .contributions { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:1.5rem; }
+    .card { padding:1.35rem; border:1px solid var(--line); border-radius:16px; background:#fff; }
+    .card .num { display:inline-grid; place-items:center; width:28px; height:28px; border-radius:50%; color:#fff; background:var(--purple); font-size:.75rem; font-weight:850; }
+    .card h4 { margin:.85rem 0 .4rem; color:var(--navy); font-size:1.05rem; }
+    .card p { margin:0; color:var(--muted); font-size:.88rem; }
+    .method-grid { display:grid; grid-template-columns:1.05fr .95fr; gap:2rem; align-items:center; }
+    .figure-frame { padding:1rem; border:1px solid var(--line); border-radius:20px; background:#fff; box-shadow:0 12px 35px rgba(42,52,91,.06); }
+    .figure-caption { margin:.8rem .2rem 0; color:var(--muted); font-size:.78rem; }
+    .equation { margin:1.2rem 0; padding:1.2rem 1.4rem; border-left:4px solid var(--purple); border-radius:0 12px 12px 0; background:#eef0fb; color:#3f4870; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:1.03rem; }
+    .primitive-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:1.7rem; }
+    .primitive { padding:1.1rem; border:1px solid var(--line); border-radius:15px; background:#fff; }
+    .primitive strong { display:block; margin-bottom:.25rem; color:var(--navy); }
+    .primitive small { color:var(--muted); }
+    .demo-shell { display:grid; grid-template-columns:.82fr 1.18fr; gap:1.3rem; padding:1.3rem; border:1px solid var(--line); border-radius:24px; background:#fff; box-shadow:var(--shadow); }
+    .demo-copy { padding:1.3rem; border-radius:17px; background:#f1f3fa; }
+    .demo-copy h4 { margin:.2rem 0 .7rem; color:var(--navy); font-size:1.25rem; }
+    .demo-copy p { color:var(--muted); font-size:.9rem; }
+    .demo-state { padding:1rem; border:1px solid #dbe0ed; border-radius:14px; background:#fff; color:var(--ink-2); font-size:.86rem; }
+    .demo-state code { color:var(--purple); font-family:ui-monospace,monospace; }
+    .demo-controls { margin-top:1.2rem; }
+    .demo-controls label { display:flex; justify-content:space-between; color:var(--muted); font-size:.78rem; font-weight:700; }
+    input[type=range] { width:100%; accent-color:var(--purple); }
+    .demo-results { padding:1rem; }
+    .metric { margin:.35rem 0 1.25rem; }
+    .metric-top { display:flex; justify-content:space-between; margin-bottom:.35rem; color:var(--ink-2); font-size:.86rem; font-weight:800; }
+    .track { height:13px; overflow:hidden; border-radius:99px; background:#e8eaf2; }
+    .fill { width:50%; height:100%; border-radius:99px; background:linear-gradient(90deg,var(--purple),var(--purple-2)); transition:width .25s ease; }
+    .fill.green { background:linear-gradient(90deg,#24a57a,#72d0ae); }
+    .fill.orange { background:linear-gradient(90deg,#e5a05e,#f2c48e); }
+    .metric-note { margin-top:.35rem; color:var(--muted); font-size:.75rem; }
+    .results-grid { display:grid; grid-template-columns:1.05fr .95fr; gap:1.5rem; align-items:start; }
+    .results-table { width:100%; border-collapse:collapse; overflow:hidden; border:1px solid var(--line); border-radius:16px; background:#fff; font-size:.84rem; }
+    .results-table th,.results-table td { padding:.72rem .65rem; border-bottom:1px solid var(--line); text-align:right; }
+    .results-table th:first-child,.results-table td:first-child { text-align:left; }
+    .results-table th { color:var(--ink-2); background:#eef0fb; font-size:.75rem; }
+    .results-table tr:last-child td { border-bottom:0; background:#f0edff; font-weight:800; color:#4b3baa; }
+    .results-note { margin-top:.75rem; color:var(--muted); font-size:.76rem; }
+    .gallery { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-top:1.6rem; }
+    .gallery figure { margin:0; }
+    .gallery .figure-frame { height:100%; }
+    .split { display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; }
+    .split .card { padding:1.5rem; }
+    .split h4 { margin:.1rem 0 .65rem; color:var(--navy); font-size:1.2rem; }
+    .split ul { margin:0; padding-left:1.1rem; color:var(--muted); font-size:.92rem; }
+    .split li + li { margin-top:.55rem; }
+    .citation { position:relative; padding:1.4rem; border-radius:16px; background:#18213b; color:#e8ebf5; }
+    .citation pre { margin:0; overflow:auto; font: .81rem/1.65 ui-monospace,SFMono-Regular,Menlo,monospace; white-space:pre-wrap; }
+    .copy { position:absolute; top:1rem; right:1rem; border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:.4rem .7rem; color:#fff; background:transparent; cursor:pointer; font-size:.72rem; }
+    footer { width:min(1160px,92vw); margin:auto; padding:2.2rem 0 3rem; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:1rem; color:var(--muted); font-size:.78rem; }
+    footer a { color:var(--ink-2); text-decoration:none; font-weight:700; }
+    @media (max-width:800px) { .nav-links { gap:.65rem; font-size:.7rem; } .hero { padding-top:5rem; } .contributions,.primitive-row,.split { grid-template-columns:1fr; } .method-grid,.demo-shell,.results-grid,.gallery { grid-template-columns:1fr; } .section-head { display:block; } .section-head .lede { margin-top:.8rem; } .teaser-caption { display:block; } footer { display:block; } footer span { display:block; margin-top:.55rem; } }
+    @media (max-width:520px) { .nav-inner { min-height:54px; } .nav-links a:nth-child(3) { display:none; } .hero h2 { font-size:2.7rem; } .abstract { padding:1.3rem; font-size:.96rem; } .demo-shell { padding:.65rem; } .demo-copy { padding:.95rem; } }
   </style>
 </head>
 <body>
-  <section class="sale" aria-labelledby="sale-title">
+  <section class="sale" aria-label="Domain for sale">
     <div class="sale-inner">
-      <p class="sale-kicker">You are looking at jevrl.github.io</p>
-      <h1 id="sale-title">Domain for sale.</h1>
+      <p class="sale-kicker">jevrl.github.io</p>
+      <h1>Domain for sale.</h1>
       <p class="sale-price">Pay me $50</p>
       <p class="sale-contact">Contact: <a href="mailto:orxjtvmboedal@mail.com">orxjtvmboedal@mail.com</a></p>
     </div>
-    <a class="scroll-cue" href="#project" aria-label="Scroll to the JevRL project">Explore the project</a>
+    <div class="scroll-cue">Scroll to project</div>
   </section>
 
-  <main id="project" class="project">
-    <div class="container">
-      <section class="hero-grid" aria-labelledby="project-title">
-        <div>
-          <div class="eyebrow">Research project · 2026</div>
-          <h2 id="project-title" class="hero-title">JevRL gives software a way to <em>reason in probabilities.</em></h2>
-          <p class="hero-copy">A small language model, a typed decision interface, and a probability-aware reinforcement learning objective. JevRL explores how an AI system can make fast decisions while staying honest about uncertainty.</p>
-          <div class="pill-row" aria-label="Project keywords">
-            <span class="pill">Typed decisions</span>
-            <span class="pill">Calibrated probabilities</span>
-            <span class="pill">Small language models</span>
-          </div>
-        </div>
-        <aside class="author-card">
-          <strong>果宝特攻</strong>
-          <span>Author</span>
-          <span>Jev-like decision learning for software workflows</span>
-        </aside>
-      </section>
+  <main class="project" id="project">
+    <nav class="nav"><div class="nav-inner"><a class="brand" href="#project">Jev<span>RL</span></a><div class="nav-links"><a href="#abstract">Abstract</a><a href="#method">Method</a><a href="#demo">Demo</a><a href="#results">Results</a><a href="#citation">Citation</a></div></div></nav>
 
-      <section class="section-block" aria-labelledby="idea-title">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">The idea</div>
-            <h2 id="idea-title">Do not just pick an answer. Know how likely it is.</h2>
-          </div>
-          <p>JevRL treats a model response as a typed distribution that downstream code can use directly. The system never needs to parse a paragraph into a decision.</p>
-        </div>
-        <div class="method" aria-label="JevRL pipeline">
-          <article class="method-step"><div class="step-num">01 / STATE</div><h3>Unstructured state</h3><p>A support ticket, incident note, or workflow record.</p></article>
-          <article class="method-step"><div class="step-num">02 / ENCODE</div><h3>Small LLM</h3><p>A frozen Qwen2.5-0.5B backbone turns the state into a compact representation.</p></article>
-          <article class="method-step"><div class="step-num">03 / DECIDE</div><h3>Typed head</h3><p>A shared candidate scorer emits masked probabilities in one forward pass.</p></article>
-          <article class="method-step"><div class="step-num">04 / ACT</div><h3>Software action</h3><p>Route, escalate, or threshold the result with explicit uncertainty.</p></article>
-        </div>
-      </section>
+    <header class="hero">
+      <div class="eyebrow">Technical report · September 2026</div>
+      <h2>JevRL: Calibrated Typed Decisions from Language Models via Reward Learning</h2>
+      <p class="authors">Guobao Tegong</p>
+      <p class="affiliation">Independent Researcher · JevRL Project</p>
+      <div class="resource-row">
+        <a class="button primary" href="output/pdf/jevrl_paper.pdf">Read the paper <span aria-hidden="true">↗</span></a>
+        <a class="button" href="https://github.com/jevrl/jevrl">Code on GitHub <span aria-hidden="true">↗</span></a>
+        <a class="button" href="#demo">Live demo <span aria-hidden="true">↓</span></a>
+        <a class="button" href="assets/demo_typed_answer.json">Demo JSON <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="hero-teaser"><img src="assets/figures/jevrl_overview.png" alt="JevRL overview: state to frozen language model to typed outputs and proper reward"><div class="teaser-caption"><span><strong>Overview.</strong> A frozen small LLM plus a compact typed decision head.</span><span>Choice · Score · Noul</span></div></div>
+    </header>
 
-      <section class="section-block" aria-labelledby="primitives-title">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">Typed primitives</div>
-            <h2 id="primitives-title">Three questions. One state. No generated answer string.</h2>
-          </div>
-          <p>Each primitive is constrained by its candidate schema. The head can answer several independent questions against the same state in parallel.</p>
-        </div>
-        <div class="primitives">
-          <article class="primitive"><div class="primitive-tag">Choice</div><h3>Where should it go?</h3><p>Select one option from a known set, such as billing, technical, or account.</p><code>choice + probabilities + confidence</code></article>
-          <article class="primitive"><div class="primitive-tag">Score</div><h3>How severe is it?</h3><p>Place a state on an ordered scale and return the full distribution over levels.</p><code>score + legend + probabilities</code></article>
-          <article class="primitive"><div class="primitive-tag">Noul</div><h3>Should we escalate?</h3><p>Return a calibrated yes probability for a clean binary question.</p><code>noul ∈ [0, 1]</code></article>
-        </div>
-      </section>
+    <section class="section" id="abstract">
+      <div class="section-head"><div><div class="section-kicker">01 · Abstract</div><h3>Make uncertainty a first-class output.</h3></div><p class="lede">JevRL is a minimal research interface for software that needs decisions it can inspect, score, and safely decline.</p></div>
+      <div class="abstract"><b>Abstract.</b> Language models are often asked to produce a single answer even when a downstream system needs a probability, a score, or an explicit abstention signal. JevRL turns a frozen small language model into three typed outputs: a categorical choice, a scalar score, and a null/abstention probability. Two independent samples are rewarded for matching a latent target while duplicate answers are penalized, yielding a quadratic proper objective in expectation. On a one-seed synthetic pilot with Qwen2.5-0.5B-Instruct, JevRL reaches 0.611 accuracy, 0.093 true-target Brier score, and 0.040 expected calibration error.</div>
+      <div class="contributions"><article class="card"><span class="num">1</span><h4>Typed by construction</h4><p>Choice, Score, and Noul are separate values that downstream code can consume directly.</p></article><article class="card"><span class="num">2</span><h4>Proper feedback</h4><p>A two-sample reward discourages brittle certainty and keeps probability mass meaningful.</p></article><article class="card"><span class="num">3</span><h4>Small and reproducible</h4><p>Frozen Qwen2.5-0.5B, a 142K-parameter head, one GPU, and a released Slurm runbook.</p></article></div>
+    </section>
 
-      <section class="section-block" aria-labelledby="results-title">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">Pilot benchmark</div>
-            <h2 id="results-title">Calibration is the point of the experiment.</h2>
-          </div>
-          <p>CalibTicket-Synth · 600 train / 300 test examples · one H800 smoke run · frozen Qwen backbone.</p>
-        </div>
-        <div class="results-wrap">
-          <table>
-            <thead><tr><th>Method</th><th>Accuracy ↑</th><th>True-q Brier ↓</th><th>True-q NLL ↓</th><th>ECE ↓</th></tr></thead>
-            <tbody>
-              <tr><td>Uniform</td><td>0.366</td><td>0.215</td><td>0.963</td><td>0.143</td></tr>
-              <tr><td>Majority</td><td>0.611</td><td>0.099</td><td>0.804</td><td>0.024</td></tr>
-              <tr><td>Qwen + CE head</td><td>0.688</td><td>0.058</td><td>0.754</td><td>0.054</td></tr>
-              <tr class="highlight"><td>Qwen + Brier head</td><td>0.700</td><td>0.038</td><td>0.727</td><td>0.060</td></tr>
-              <tr><td>Single-sample accuracy RL</td><td>0.582</td><td>0.372</td><td>2.199</td><td>0.393</td></tr>
-              <tr class="highlight"><td>Two-sample JevRL</td><td>0.611</td><td>0.093</td><td>0.800</td><td>0.040</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="results-note">Lower Brier, NLL, and ECE are better. The hidden conditional distribution is used only for evaluation; the training split exposes one sampled label per question. This is a small pilot, not a claim of statistical significance.</p>
-      </section>
+    <section class="section wide" id="method">
+      <div class="section-head"><div><div class="section-kicker">02 · Method</div><h3>A typed head around a frozen language model.</h3></div><p class="lede">The pilot isolates the interface idea: keep the language model fixed and learn only the small decision head.</p></div>
+      <div class="method-grid"><div class="figure-frame"><img src="assets/figures/jevrl_overview.png" alt="JevRL method pipeline"><p class="figure-caption">Figure 1. State → frozen Qwen2.5-0.5B → typed head → proper two-sample reward.</p></div><div><p>Given a state and candidate set, the frozen backbone produces a hidden representation. The head emits a categorical distribution over candidates, a bounded scalar, and a null probability.</p><div class="equation">R(A, B, y) = 1[A = y] + 1[B = y] − 1[A = B]</div><p>In the categorical setting, the expected reward is <code>||q||² − ||p − q||²</code>. Maximizing it is equivalent to minimizing a squared probability error up to a constant.</p><div class="primitive-row"><div class="primitive"><strong>Choice</strong><small>A probability distribution over candidates.</small></div><div class="primitive"><strong>Score</strong><small>A bounded confidence or urgency value.</small></div><div class="primitive"><strong>Noul</strong><small>An explicit probability of abstention.</small></div></div></div></div>
+    </section>
 
-      <section class="section-block" aria-labelledby="next-title">
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">Project status</div>
-            <h2 id="next-title">A compact experiment today. A sharper decision model next.</h2>
-          </div>
-          <p>The first release focuses on a transparent protocol: typed outputs, proper scoring, and baselines that make overconfidence visible.</p>
-        </div>
-        <div class="split">
-          <article class="info-card accent"><h3>Code</h3><p>The Qwen2.5-0.5B implementation, synthetic benchmark generator, Slurm recipe, and evaluation artifacts are being packaged for release.</p><span class="coming">Coming soon</span></article>
-          <article class="info-card"><h3>Paper</h3><p>A short paper will document the decision interface, the two-sample proper reward, calibration metrics, and the limits of this pilot.</p><span class="coming">Coming soon</span></article>
-        </div>
-      </section>
+    <section class="section" id="demo">
+      <div class="section-head"><div><div class="section-kicker">03 · Demo</div><h3>One state, three typed outputs.</h3></div><p class="lede">Drag the difficulty control to inspect how a decision can become less certain without turning into a free-form paragraph.</p></div>
+      <div class="demo-shell"><div class="demo-copy"><h4>API timeout ticket</h4><p>A small browser-native visualization of the released interface. The page is static; the repository contains the model-backed implementation.</p><div class="demo-state"><code>state</code><br>Ticket: API timeout<br>Region: us-east<br>Candidates: low / medium / high</div><div class="demo-controls"><label for="difficulty"><span>State difficulty</span><span id="difficulty-label">0.20</span></label><input id="difficulty" type="range" min="0" max="100" value="20"></div></div><div class="demo-results"><div class="metric"><div class="metric-top"><span>Choice · medium</span><span id="choice-value">0.70</span></div><div class="track"><div class="fill" id="choice-bar" style="width:70%"></div></div><div class="metric-note">low 0.08 · medium 0.70 · high 0.22</div></div><div class="metric"><div class="metric-top"><span>Score</span><span id="score-value">0.74</span></div><div class="track"><div class="fill green" id="score-bar" style="width:74%"></div></div><div class="metric-note">confidence / urgency score</div></div><div class="metric"><div class="metric-top"><span>Noul · abstain</span><span id="noul-value">0.08</span></div><div class="track"><div class="fill orange" id="noul-bar" style="width:8%"></div></div><div class="metric-note">the null path stays visible to downstream software</div></div></div></div>
+    </section>
 
-      <footer>
-        <span>JevRL · Calibrated decisions for software</span>
-        <span>Author: 果宝特攻 · <a href="mailto:orxjtvmboedal@mail.com">Contact</a></span>
-      </footer>
-    </div>
+    <section class="section wide" id="results">
+      <div class="section-head"><div><div class="section-kicker">04 · Experiments</div><h3>Calibration is the point of the reward.</h3></div><p class="lede">CalibTicket-Synth · 600 train / 300 test · seed 7 · frozen Qwen2.5-0.5B · one H800.</p></div>
+      <div class="results-grid"><div class="figure-frame"><img src="assets/figures/pilot_results.png" alt="Bar charts comparing accuracy and true-target Brier score across baselines"><p class="figure-caption">Figure 2. JevRL matches majority accuracy while avoiding the overconfidence of single-sample accuracy RL.</p></div><div><table class="results-table"><thead><tr><th>Method</th><th>Acc.</th><th>Brier ↓</th><th>ECE ↓</th></tr></thead><tbody><tr><td>Uniform</td><td>.366</td><td>.215</td><td>.143</td></tr><tr><td>Majority</td><td>.611</td><td>.099</td><td>.024</td></tr><tr><td>CE</td><td>.688</td><td>.058</td><td>.054</td></tr><tr><td>Brier</td><td>.700</td><td>.038</td><td>.060</td></tr><tr><td>Single-sample RL</td><td>.582</td><td>.372</td><td>.393</td></tr><tr><td>JevRL</td><td>.611</td><td>.093</td><td>.040</td></tr></tbody></table><p class="results-note">True-target metrics use the latent q only for evaluation. This is a one-seed synthetic pilot, not a state-of-the-art claim.</p></div></div>
+      <div class="gallery"><figure><div class="figure-frame"><img src="assets/figures/typed_outputs.png" alt="Qualitative typed outputs for a support ticket"><p class="figure-caption">Figure 3. The same state can feed a choice, score, and abstention consumer.</p></div></figure><figure><div class="figure-frame"><img src="assets/figures/typed_demo.svg" alt="Interactive demo visualization with choice, score and abstention probabilities"><p class="figure-caption">A browser-native rendering of the demo JSON released with the code.</p></div></figure></div>
+    </section>
+
+    <section class="section" id="limitations">
+      <div class="section-head"><div><div class="section-kicker">05 · Scope</div><h3>What this pilot does and does not show.</h3></div></div>
+      <div class="split"><article class="card"><h4>Limitations</h4><ul><li>Synthetic benchmark and one random seed.</li><li>Only the compact head is trained; the backbone stays frozen.</li><li>Noul is exposed but not yet trained with a selective-prediction dataset.</li><li>No claim of reproducing an external Jev system or of production readiness.</li></ul></article><article class="card"><h4>Future work</h4><ul><li>Evaluate real decision benchmarks with soft labels and distribution shift.</li><li>Compare frozen, adapter-tuned, and fully tuned language models.</li><li>Train abstention against selective risk and downstream escalation cost.</li><li>Measure whether typed outputs improve tool routing and agent reliability.</li></ul></article></div>
+    </section>
+
+    <section class="section" id="citation">
+      <div class="section-head"><div><div class="section-kicker">06 · Citation</div><h3>Use the work, extend the idea.</h3></div><p class="lede">The PDF and code are released together so the pilot can be inspected end to end.</p></div>
+      <div class="citation"><button class="copy" id="copy-bib">Copy BibTeX</button><pre id="bibtex">@article{tegong2026jevrl,
+  title={JevRL: Calibrated Typed Decisions from Language Models via Reward Learning},
+  author={Tegong, Guobao},
+  journal={JevRL Technical Report},
+  year={2026},
+  note={One-seed synthetic pilot},
+  url={https://jevrl.github.io/}
+}</pre></div>
+    </section>
+
+    <footer><span>JevRL · Guobao Tegong · Independent Researcher</span><span><a href="output/pdf/jevrl_paper.pdf">Paper PDF</a> · <a href="https://github.com/jevrl/jevrl">GitHub</a> · <a href="mailto:orxjtvmboedal@mail.com">Contact</a></span></footer>
   </main>
+  <script>
+    const slider = document.getElementById('difficulty');
+    const dl = document.getElementById('difficulty-label');
+    const choiceBar = document.getElementById('choice-bar');
+    const scoreBar = document.getElementById('score-bar');
+    const noulBar = document.getElementById('noul-bar');
+    const choiceValue = document.getElementById('choice-value');
+    const scoreValue = document.getElementById('score-value');
+    const noulValue = document.getElementById('noul-value');
+    function updateDemo() {
+      const d = Number(slider.value) / 100;
+      const choice = 0.70 - 0.30 * d;
+      const score = 0.74 - 0.24 * d;
+      const noul = 0.08 + 0.42 * d;
+      dl.textContent = d.toFixed(2);
+      choiceValue.textContent = choice.toFixed(2); choiceBar.style.width = (choice * 100) + '%';
+      scoreValue.textContent = score.toFixed(2); scoreBar.style.width = (score * 100) + '%';
+      noulValue.textContent = noul.toFixed(2); noulBar.style.width = (noul * 100) + '%';
+    }
+    slider.addEventListener('input', updateDemo);
+    document.getElementById('copy-bib').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(document.getElementById('bibtex').textContent);
+      document.getElementById('copy-bib').textContent = 'Copied';
+      setTimeout(() => document.getElementById('copy-bib').textContent = 'Copy BibTeX', 1400);
+    });
+  </script>
 </body>
 </html>
