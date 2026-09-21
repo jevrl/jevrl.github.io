@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jevrl.github.io/sitemap.xml
